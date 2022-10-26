@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div>
+    <h1>VUE TYPING TEST</h1>
+    <div class="parameter-wrapper">
       <p>Mistakes {{ mistakes }}</p>
       <p>
         Accuracy
@@ -14,15 +15,7 @@
     <div class="hello" tabindex="0" @keydown="keyhandler" ref="typingWrap">
       <span
         class="initial"
-        :class="
-          index === inputtedIndex
-            ? 'border-yellow'
-            : paragraph[index] === inputText[index]
-            ? 'green'
-            : index < inputtedIndex && paragraph[index] !== inputText[index]
-            ? 'red'
-            : 'initial'
-        "
+        :class="switchLetterColor(index)"
         :key="index"
         v-for="(item, index) in paragraph"
         >{{ item }}</span
@@ -68,6 +61,15 @@ export default {
       this.inputText.push(event.key);
       this.inputtedIndex++;
     },
+    switchLetterColor(index) {
+      if (index === this.inputtedIndex) return "border-yellow";
+      if (this.paragraph[index] === this.inputText[index]) return "green";
+      if (
+        index < this.inputtedIndex &&
+        this.paragraph[index] !== this.inputText[index]
+      )
+        return"red";
+    },
   },
 };
 </script>
@@ -87,6 +89,11 @@ export default {
 .green {
   color: green !important;
   /* display: none; */
+}
+.parameter-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
 }
 .hello {
   line-height: 50px;
