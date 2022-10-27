@@ -10,8 +10,7 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "txtgen": "^3.0.4",
-    "vue": "^2.6.14",
-    "vue-router": "^4.1.5"
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
