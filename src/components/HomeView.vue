@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>VUE TYPING TEST</h1>
+    <h1 >VUE TYPING TEST</h1>
     <div class="parameter-wrapper">
       <p>Mistakes {{ mistakes }}</p>
       <p>
@@ -10,17 +10,26 @@
         }}%
       </p>
       <p>char {{ inputtedIndex }}</p>
+      <p>Words {{ countWords }}</p>
       <p>WPM {{ inputtedIndex / 5 }}</p>
     </div>
-    <div class="hello" tabindex="0" @keydown="keyhandler" ref="typingWrap">
-      <span
-        class="initial"
-        :class="switchLetterColor(index)"
-        :key="index"
-        v-for="(item, index) in paragraph"
-        >{{ item }}</span
-      >
-    </div>
+       
+    <div :class="!typing?'blur':null" @click="focusToTyping" >
+      <div
+      class="typingWrap"
+        tabindex="0"
+        @keydown="keyhandler"
+        ref="typingWrap"
+        >
+        <span
+          class="initial"
+          :class="switchLetterColor(index)"
+          :key="index"
+          v-for="(item, index) in paragraph"
+          >{{ item }}</span
+          >
+        </div>
+      </div>
   </div>
 </template>
 
@@ -35,6 +44,8 @@ export default {
       inputtedIndex: 0,
       mistakes: 0,
       inputText: [],
+      countWords: 0,
+      typing:false
     };
   },
   props: {
@@ -45,7 +56,6 @@ export default {
       .toLocaleLowerCase()
       .replace(/[^a-zA-Z0-9 ]/g, "")
       .split("");
-    this.$refs.typingWrap.focus();
   },
   methods: {
     keyhandler(event) {
@@ -56,6 +66,9 @@ export default {
         this.inputtedIndex--;
         this.mistakes--;
         return (this.inputText = this.inputText.slice(0, -1));
+      }
+      if (event.key === " ") {
+        this.countWords++;
       }
       console.log(console.log(this.inputtedIndex));
       this.inputText.push(event.key);
@@ -68,7 +81,11 @@ export default {
         index < this.inputtedIndex &&
         this.paragraph[index] !== this.inputText[index]
       )
-        return"red";
+        return "red";
+    },
+    focusToTyping() {
+      this.typing = true
+      this.$refs.typingWrap.focus();
     },
   },
 };
@@ -83,6 +100,10 @@ export default {
 .red {
   color: red !important;
 }
+.blur{
+  cursor: pointer;
+  filter:blur(8px)
+}
 .border-yellow {
   border-left: yellow 2px solid !important;
 }
@@ -95,7 +116,7 @@ export default {
   justify-content: center;
   gap: 50px;
 }
-.hello {
+.typingWrap {
   line-height: 50px;
   font-size: 1.5rem;
   height: 156.75px;
