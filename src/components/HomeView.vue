@@ -6,7 +6,7 @@
       <p>
         Accuracy
         {{
-          100 - ((Number(mistakes) / Number(inputtedIndex)) * 100).toFixed(2)
+            100 - ((+mistakes / +inputtedIndex) * 100).toFixed(2)
         }}%
       </p>
       <p>char {{ inputtedIndex }}</p>
@@ -14,23 +14,14 @@
       <p>WPM {{ inputtedIndex / 5 }}</p>
     </div>
 
-    <div :class="!typing ? 'blur' : null" >
-      <div
-        class="typingWrap"
-        tabindex="0"
-        @keydown="keyhandler"
-        ref="typingWrap"
-      >
-        <span
-          class="initial"
-          :class="switchLetterColor(index)"
-          :key="index"
-          v-for="(item, index) in paragraph"
-          >{{ item }}</span
-        >
+    <div :class="!isTyping ? 'blur' : null">
+      <div class="isTypingWrap" tabindex="0" @keydown="keyhandler" ref="isTypingWrap">
+        <span class="initial" :class="getLetterColor(index)" :key="index" v-for="(item, index) in paragraph">{{ item
+        }}</span>
       </div>
     </div>
-    <div v-if="!typing" style="display: flex; justify-content: center; align-items: center;margin-top: 50px;margin-bottom:50px">
+    <div v-if="!isTyping"
+      style="display: flex; justify-content: center; align-items: center;margin-top: 50px;margin-bottom:50px">
       <div style="width: 20%">
         <button @click="focusToTyping" class="button-19" role="button">click here to start</button>
       </div>
@@ -48,9 +39,9 @@ export default {
       text: "",
       inputtedIndex: 0,
       mistakes: 0,
-      inputText: [],
+      inputtedText: [],
       countWords: 0,
-      typing: false,
+      isTyping: false,
     };
   },
   props: {
@@ -70,27 +61,34 @@ export default {
       if (event.key === "Backspace") {
         this.inputtedIndex--;
         this.mistakes--;
-        return (this.inputText = this.inputText.slice(0, -1));
+        this.inputtedText = this.inputtedText.slice(0, -1)
+      } else {
+
+        if (event.key === " ") {
+          this.countWords++;
+        }
+        this.inputtedText.push(event.key);
+        this.inputtedIndex++;
       }
-      if (event.key === " ") {
-        this.countWords++;
+    },
+
+    getLetterColor(index) {
+      switch (true) {
+        case index === this.inputtedIndex:
+          return "border-yellow"
+        case this.paragraph[index] === this.inputtedText[index]:
+          return "green"
+        case index < this.inputtedIndex && this.paragraph[index] !== this.inputtedIndex[index]:
+          return "red"
+
+        default:
+          ''
       }
-      console.log(console.log(this.inputtedIndex));
-      this.inputText.push(event.key);
-      this.inputtedIndex++;
     },
-    switchLetterColor(index) {
-      if (index === this.inputtedIndex) return "border-yellow";
-      if (this.paragraph[index] === this.inputText[index]) return "green";
-      if (
-        index < this.inputtedIndex &&
-        this.paragraph[index] !== this.inputText[index]
-      )
-        return "red";
-    },
+
     focusToTyping() {
-      this.typing = true;
-      this.$refs.typingWrap.focus();
+      this.isTyping = true;
+      this.$refs.isTypingWrap.focus();
     },
   },
 };
@@ -102,45 +100,56 @@ export default {
   color: grey;
   border-left: transparent 2px solid;
 }
+
 .red {
   color: red !important;
 }
+
 .blur {
   cursor: pointer;
   filter: blur(8px);
 }
+
 .border-yellow {
   border-left: yellow 2px solid !important;
 }
+
 .green {
   color: green !important;
   /* display: none; */
 }
+
 .parameter-wrapper {
   display: flex;
   justify-content: center;
   gap: 50px;
 }
-.typingWrap {
+
+.isTypingWrap {
   line-height: 50px;
   font-size: 1.5rem;
   height: 156.75px;
   overflow: hidden;
+  user-select: none;
   width: 100%;
   margin-left: unset;
   transition: all 0.25s ease 0s;
 }
+
 h3 {
   margin: 40px 0 0;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   display: inline-block;
   margin: 0 10px;
 }
+
 a {
   color: #42b983;
 }
