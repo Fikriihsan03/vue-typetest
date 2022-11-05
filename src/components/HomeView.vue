@@ -2,19 +2,22 @@
   <div>
     <h1>VUE TYPING TEST</h1>
     <div class="parameter-wrapper">
+      <p>Time = {{ timeCountDown }}</p>
+
+    </div>
+    <div v-if="timeCountDown<=0">
       <p>Mistakes {{ mistakes }}</p>
       <p>
         Accuracy
         {{
-            100 - ((+mistakes / +inputtedIndex) * 100).toFixed(2)
+            100 - ((+mistakes / +finalData.character) * 100).toFixed(2)
         }}%
       </p>
-      <p>char {{ inputtedIndex }}</p>
+      <p>Character {{ finalData.character }}</p>
       <p>Words {{ countWords }}</p>
-      <p>WPM {{ inputtedIndex / 5 }}</p>
+      <p>WPM {{ (finalData.character / 5) }}</p>
     </div>
-
-    <div :class="!isTyping ? 'blur' : null">
+    <div v-else :class="!isTyping ? 'blur' : null">
       <div class="isTypingWrap" tabindex="0" @keydown="keyhandler" ref="isTypingWrap">
         <span class="initial" :class="getLetterColor(index)" :key="index" v-for="(item, index) in paragraph">{{ item
         }}</span>
@@ -35,13 +38,21 @@ export default {
   name: "HomeView",
   data() {
     return {
+      finalData: {
+        mistakes: 0,
+        accuration: 0,
+        character: 0,
+        words: 0,
+        wpm: 0,
+      },
       paragraph: [],
-      text: "",
       inputtedIndex: 0,
       mistakes: 0,
       inputtedText: [],
       countWords: 0,
+      countShringkingText: 1,
       isTyping: false,
+      timeCountDown: 60
     };
   },
   props: {
@@ -54,7 +65,28 @@ export default {
       .split("");
   },
   methods: {
+    startCountDown(second) {
+
+      const interval = setInterval(() => {
+        this.timeCountDown = second--
+
+        if (second < 0) {
+          console.log(`ini final data ${this.finalData.character}`)
+          console.log(`ini inputtedIndex ${this.inputtedIndex}`)
+          clearInterval(interval)
+          this.finalData.character += this.inputtedIndex
+        }
+      }, 1000);
+
+    },
     keyhandler(event) {
+      if (this.countWords > 16 * this.countShringkingText) {
+        this.finalData.character += this.inputtedIndex
+        this.paragraph.splice(0, this.inputtedIndex)
+        this.inputtedText.splice(0, this.inputtedIndex)
+        this.inputtedIndex = 0
+        this.countShringkingText += 1
+      }
       if (event.key !== this.paragraph[this.inputtedIndex]) {
         this.mistakes++;
       }
@@ -64,11 +96,12 @@ export default {
         this.inputtedText = this.inputtedText.slice(0, -1)
       } else {
 
-        if (event.key === " ") {
+        if (event.key === " " && event.key === this.paragraph[this.inputtedIndex]) {
           this.countWords++;
         }
         this.inputtedText.push(event.key);
         this.inputtedIndex++;
+
       }
     },
 
@@ -89,6 +122,8 @@ export default {
     focusToTyping() {
       this.isTyping = true;
       this.$refs.isTypingWrap.focus();
+      this.startCountDown(this.timeCountDown)
+
     },
   },
 };
