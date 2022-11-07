@@ -3,7 +3,7 @@
     <h1>VUE TYPING TEST</h1>
     <div>
       <p>Time = {{ timeCountDown }}</p>
-      <p>{{ countWords }}</p>
+      <p>{{ mistakes }}</p>
 
     </div>
     <div v-if="timeCountDown <= 0">
@@ -55,7 +55,7 @@ export default {
       countWords: 0,
       countShringkingText: 1,
       isTyping: false,
-      timeCountDown: 160
+      timeCountDown: 60
     };
   },
   props: {
@@ -63,6 +63,7 @@ export default {
   },
   mounted() {
     this.generateParagraph()
+    console.log(this.paragraph)
 
   },
   methods: {
@@ -83,39 +84,39 @@ export default {
 
     },
     generateParagraph() {
+      this.inputtedIndex = 0
+      this.inputtedText = []
       this.paragraph = article(2)
         .toLocaleLowerCase()
         .replace(/[^a-zA-Z0-9 ]/g, "")
         .split(" ").splice(0, 47).join(" ").split("")
 
       this.paragraph.push(" ")
-      this.inputtedText = []
-      this.inputtedIndex = 0
     },
     keyhandler(event) {
-      if (this.countWords >= 47 * this.countShringkingText) {
+      if (this.inputtedIndex === this.paragraph.length - 1) {
         this.finalData.character += this.inputtedIndex
         this.countShringkingText += 1
         this.generateParagraph()
-      }
-      if (event.key !== this.paragraph[this.inputtedIndex]) {
-        this.mistakes++;
-      }
-      if (event.key === "Backspace") {
-        if (this.inputtedText[this.inputtedIndex - 1] === " " && this.paragraph[this.inputtedIndex - 1] === " ") {
-          this.countWords--
-        }
-        this.inputtedIndex--;
-        this.mistakes--;
-        this.inputtedText = this.inputtedText.slice(0, -1)
       } else {
-
-        if (event.key === " " && event.key === this.paragraph[this.inputtedIndex]) {
-          this.countWords++;
+        if (event.key !== this.paragraph[this.inputtedIndex]) {
+          this.mistakes++;
         }
-        this.inputtedText.push(event.key);
-        this.inputtedIndex++;
+        if (event.key === "Backspace") {
+          if (this.inputtedText[this.inputtedIndex - 1] === " " && this.paragraph[this.inputtedIndex - 1] === " ") {
+            this.countWords--
+          }
+          this.inputtedIndex--;
+          this.mistakes--;
+          this.inputtedText = this.inputtedText.slice(0, -1)
+        } else {
+          if (event.key === " " && event.key === this.paragraph[this.inputtedIndex]) {
+            this.countWords++;
+          }
+          this.inputtedText.push(event.key);
+          this.inputtedIndex++;
 
+        }
       }
     },
 
@@ -135,7 +136,7 @@ export default {
           return "border-yellow"
         case this.paragraph[index] === this.inputtedText[index]:
           return "green"
-        case index < this.inputtedIndex && this.paragraph[index] !== this.inputtedIndex[index]:
+        case index < this.inputtedIndex && this.paragraph[index] !== this.inputtedText[index]:
           return "red"
 
         default:
