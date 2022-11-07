@@ -93,7 +93,7 @@ export default {
       this.inputtedIndex = 0
     },
     keyhandler(event) {
-      if (this.countWords > 46 * this.countShringkingText) {
+      if (this.countWords >= 47 * this.countShringkingText) {
         this.finalData.character += this.inputtedIndex
         this.countShringkingText += 1
         this.generateParagraph()
