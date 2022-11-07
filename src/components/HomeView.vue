@@ -3,19 +3,22 @@
     <h1>VUE TYPING TEST</h1>
     <div>
       <p>Time = {{ timeCountDown }}</p>
+      <p>{{ countWords }}</p>
 
     </div>
-    <div v-if="timeCountDown<=0" class="parameter-wrapper">
-      <p>Mistakes {{ mistakes }}</p>
-      <p>
-        Accuracy
-        {{
-            100 - ((+mistakes / +finalData.character) * 100).toFixed(2)
-        }}%
-      </p>
-      <p>Character {{ finalData.character }}</p>
-      <p>Words {{ countWords }}</p>
-      <p>WPM {{ (finalData.character / 5) }}</p>
+    <div v-if="timeCountDown <= 0">
+      <div class="parameter-wrapper">
+        <p>Mistakes {{ finalData.mistakes }}</p>
+        <p>
+          Accuracy{{ finalData.accuration }}%
+        </p>
+        <p>Character {{ finalData.character }}</p>
+        <p>Words {{ countWords }}</p>
+        <p>WPM {{ finalData.wpm }}</p>
+      </div>
+      <div style="width: 20%;margin:0px auto">
+        <button @click="repeatTest" class="button-19" role="button">Repeat Test</button>
+      </div>
     </div>
     <div v-else :class="!isTyping ? 'blur' : null">
       <div class="isTypingWrap" tabindex="0" @keydown="keyhandler" ref="isTypingWrap">
@@ -52,42 +55,56 @@ export default {
       countWords: 0,
       countShringkingText: 1,
       isTyping: false,
-      timeCountDown: 60
+      timeCountDown: 160
     };
   },
   props: {
     msg: String,
   },
   mounted() {
-    this.paragraph = article(2)
-      .toLocaleLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, "")
-      .split("");
+    this.generateParagraph()
+
   },
   methods: {
     startCountDown(second) {
       const interval = setInterval(() => {
         this.timeCountDown = second--
-
         if (second < 0) {
           clearInterval(interval)
-          this.finalData.character += this.inputtedIndex
+          this.finalData = {
+            mistakes: this.mistakes,
+            accuration: 100 - ((this.mistakes / (this.countShringkingText > 1 ? this.finalData.character : this.inputtedIndex)) * 100).toFixed(2),
+            character: this.finalData.character += this.inputtedIndex,
+            words: this.countWords,
+            wpm: this.finalData.character / 5,
+          }
         }
       }, 1000);
 
     },
+    generateParagraph() {
+      this.paragraph = article(2)
+        .toLocaleLowerCase()
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .split(" ").splice(0, 47).join(" ").split("")
+
+      this.paragraph.push(" ")
+      this.inputtedText = []
+      this.inputtedIndex = 0
+    },
     keyhandler(event) {
-      if (this.countWords > 15 * this.countShringkingText) {
+      if (this.countWords > 46 * this.countShringkingText) {
         this.finalData.character += this.inputtedIndex
-        this.paragraph.splice(0, this.inputtedIndex)
-        this.inputtedText.splice(0, this.inputtedIndex)
-        this.inputtedIndex = 0
         this.countShringkingText += 1
+        this.generateParagraph()
       }
       if (event.key !== this.paragraph[this.inputtedIndex]) {
         this.mistakes++;
       }
       if (event.key === "Backspace") {
+        if (this.inputtedText[this.inputtedIndex - 1] === " " && this.paragraph[this.inputtedIndex - 1] === " ") {
+          this.countWords--
+        }
         this.inputtedIndex--;
         this.mistakes--;
         this.inputtedText = this.inputtedText.slice(0, -1)
@@ -100,6 +117,16 @@ export default {
         this.inputtedIndex++;
 
       }
+    },
+
+    repeatTest() {
+      this.generateParagraph()
+      this.mistakes = 0,
+      this.inputtedText = [],
+      this.countWords = 0,
+      this.countShringkingText = 1
+      this.timeCountDown = 60
+      this.isTyping = false
     },
 
     getLetterColor(index) {
@@ -160,7 +187,7 @@ export default {
 .isTypingWrap {
   line-height: 50px;
   font-size: 1.5rem;
-  height: 156.75px;
+  /* height: 156.75px; */
   overflow: hidden;
   user-select: none;
   width: 100%;
