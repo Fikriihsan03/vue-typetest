@@ -1,11 +1,11 @@
 <template>
   <div>
     <h1>VUE TYPING TEST</h1>
-    <div class="parameter-wrapper">
+    <div>
       <p>Time = {{ timeCountDown }}</p>
 
     </div>
-    <div v-if="timeCountDown<=0">
+    <div v-if="timeCountDown<=0" class="parameter-wrapper">
       <p>Mistakes {{ mistakes }}</p>
       <p>
         Accuracy
@@ -66,13 +66,10 @@ export default {
   },
   methods: {
     startCountDown(second) {
-
       const interval = setInterval(() => {
         this.timeCountDown = second--
 
         if (second < 0) {
-          console.log(`ini final data ${this.finalData.character}`)
-          console.log(`ini inputtedIndex ${this.inputtedIndex}`)
           clearInterval(interval)
           this.finalData.character += this.inputtedIndex
         }
@@ -80,7 +77,7 @@ export default {
 
     },
     keyhandler(event) {
-      if (this.countWords > 16 * this.countShringkingText) {
+      if (this.countWords > 15 * this.countShringkingText) {
         this.finalData.character += this.inputtedIndex
         this.paragraph.splice(0, this.inputtedIndex)
         this.inputtedText.splice(0, this.inputtedIndex)
