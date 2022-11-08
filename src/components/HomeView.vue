@@ -3,8 +3,6 @@
     <h1>VUE TYPING TEST</h1>
     <div>
       <p>Time = {{ timeCountDown }}</p>
-      <p>{{ mistakes }}</p>
-
     </div>
     <div v-if="timeCountDown <= 0">
       <div class="parameter-wrapper">
@@ -94,6 +92,9 @@ export default {
       this.paragraph.push(" ")
     },
     keyhandler(event) {
+      if(this.inputtedIndex === -1){
+        this.repeatTest()
+      }
       if (this.inputtedIndex === this.paragraph.length - 1) {
         this.finalData.character += this.inputtedIndex
         this.countShringkingText += 1
@@ -123,9 +124,9 @@ export default {
     repeatTest() {
       this.generateParagraph()
       this.mistakes = 0,
-      this.inputtedText = [],
-      this.countWords = 0,
-      this.countShringkingText = 1
+        this.inputtedText = [],
+        this.countWords = 0,
+        this.countShringkingText = 1
       this.timeCountDown = 60
       this.isTyping = false
     },
