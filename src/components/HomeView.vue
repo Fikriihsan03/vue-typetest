@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="container">
     <h1>VUE TYPING TEST</h1>
-    <div>
-      <p>Time = {{ timeCountDown }}</p>
+    <div class="timer-wrap">
+      <p>{{ Math.trunc(timeCountDown) }} Second</p>
+      <BaseTimer :second="this.timeCountDown"/>
     </div>
     <div v-if="timeCountDown <= 0">
       <div class="parameter-wrapper">
@@ -35,8 +36,12 @@
 
 <script>
 import { article } from "txtgen";
+import BaseTimer from "./BaseTimer.vue";
 export default {
   name: "HomeView",
+  components: {
+    BaseTimer
+  },
   data() {
     return {
       finalData: {
@@ -53,7 +58,7 @@ export default {
       countWords: 0,
       countShringkingText: 1,
       isTyping: false,
-      timeCountDown: 60
+      timeCountDown: 30
     };
   },
   props: {
@@ -67,7 +72,7 @@ export default {
   methods: {
     startCountDown(second) {
       const interval = setInterval(() => {
-        this.timeCountDown = second--
+        this.timeCountDown = (second-=0.01).toFixed(1)
         if (second < 0) {
           clearInterval(interval)
           this.finalData = {
@@ -78,7 +83,7 @@ export default {
             wpm: this.finalData.character / 5,
           }
         }
-      }, 1000);
+      }, 10);
 
     },
     generateParagraph() {
@@ -92,7 +97,7 @@ export default {
       this.paragraph.push(" ")
     },
     keyhandler(event) {
-      if(this.inputtedIndex === -1){
+      if (this.inputtedIndex === -1) {
         this.repeatTest()
       }
       if (this.inputtedIndex === this.paragraph.length - 1) {
@@ -124,7 +129,8 @@ export default {
     repeatTest() {
       this.generateParagraph()
       this.mistakes = 0,
-        this.inputtedText = [],
+        this.finalData.character = 0
+      this.inputtedText = [],
         this.countWords = 0,
         this.countShringkingText = 1
       this.timeCountDown = 60
@@ -157,13 +163,20 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container{
+  margin:0px 50px;
+}
+.timer-wrap{
+  text-align: start;
+  margin-bottom:10px;
+}
 .initial {
-  color: grey;
+  color: white;
   border-left: transparent 2px solid;
 }
 
 .red {
-  color: red !important;
+  color: #ff0000 !important;
 }
 
 .blur {
@@ -176,7 +189,7 @@ export default {
 }
 
 .green {
-  color: green !important;
+  color: #34ff34 !important;
   /* display: none; */
 }
 
@@ -189,7 +202,7 @@ export default {
 .isTypingWrap {
   line-height: 50px;
   font-size: 1.5rem;
-  /* height: 156.75px; */
+  outline: none;
   overflow: hidden;
   user-select: none;
   width: 100%;
