@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="container">
     <h1>VUE TYPING TEST</h1>
-    <div>
-      <p>Time = {{ timeCountDown }}</p>
+    <div class="timer-wrap">
+      <p>{{ Math.trunc(timeCountDown) }} Second</p>
+      <BaseTimer :second="this.timeCountDown"/>
     </div>
     <div v-if="timeCountDown <= 0">
       <div class="parameter-wrapper">
@@ -35,8 +36,12 @@
 
 <script>
 import { article } from "txtgen";
+import BaseTimer from "./BaseTimer.vue";
 export default {
   name: "HomeView",
+  components: {
+    BaseTimer
+  },
   data() {
     return {
       finalData: {
@@ -67,7 +72,7 @@ export default {
   methods: {
     startCountDown(second) {
       const interval = setInterval(() => {
-        this.timeCountDown = second--
+        this.timeCountDown = (second-=0.01).toFixed(1)
         if (second < 0) {
           clearInterval(interval)
           this.finalData = {
@@ -78,7 +83,7 @@ export default {
             wpm: this.finalData.character / 5,
           }
         }
-      }, 1000);
+      }, 10);
 
     },
     generateParagraph() {
@@ -157,6 +162,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container{
+  margin:0px 50px;
+}
+.timer-wrap{
+  text-align: start;
+  margin-bottom:10px;
+}
 .initial {
   color: grey;
   border-left: transparent 2px solid;
