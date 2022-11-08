@@ -1,5 +1,5 @@
 <template>
-  <div class="progressbar" :style="{ width:second/60*100+'%', fontSize: fontSize + 'px' }">
+  <div class="progressbar" :style="{ width:second/30*100+'%', fontSize: fontSize + 'px' }">
   </div>
 </template>
 <script>

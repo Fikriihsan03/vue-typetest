@@ -58,7 +58,7 @@ export default {
       countWords: 0,
       countShringkingText: 1,
       isTyping: false,
-      timeCountDown: 60
+      timeCountDown: 30
     };
   },
   props: {
