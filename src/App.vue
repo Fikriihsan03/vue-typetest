@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <img alt="Vue logo" width="100" height="100" src="./assets/logo.png">
     <HomeView msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
@@ -27,6 +27,6 @@ body{
   text-align: center;
   color: #f0e7e7;
   background-color: #2c3e50;
-  height: 100vh;
+  min-height: 100vh;
 }
 </style>
