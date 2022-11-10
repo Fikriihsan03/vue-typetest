@@ -1,5 +1,7 @@
 # vue-typetest
 
+vue-typetest is a small project that test your typing word per minute
+
 ## Project setup
 ```
 npm install
