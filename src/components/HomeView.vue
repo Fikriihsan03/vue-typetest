@@ -1,9 +1,13 @@
 <template>
   <div class="container">
     <h1>VUE TYPING TEST</h1>
+    <div style="height:50px">
+      <h1 v-if="isStartButtonClicked && startTypingCountDown > 0">{{ startTypingCountDown }}</h1>
+      <h1 v-if="startTypingCountDown === 0">START!!!</h1>
+    </div>
     <div class="timer-wrap">
       <p>{{ Math.trunc(timeCountDown) }} Second</p>
-      <BaseTimer :second="this.timeCountDown"/>
+      <BaseTimer :second="this.timeCountDown" />
     </div>
     <div v-if="timeCountDown <= 0">
       <div class="parameter-wrapper">
@@ -26,7 +30,7 @@
       </div>
     </div>
     <div v-if="!isTyping"
-      style="display: flex; justify-content: center; align-items: center;margin-top: 50px;margin-bottom:50px">
+      style="display: flex; justify-content: center; align-items: center;padding:50px">
       <div style="width: 20%">
         <button @click="focusToTyping" class="button-19" role="button">click here to start</button>
       </div>
@@ -58,7 +62,9 @@ export default {
       countWords: 0,
       countShringkingText: 1,
       isTyping: false,
-      timeCountDown: 30
+      timeCountDown: 30,
+      isStartButtonClicked: false,
+      startTypingCountDown: 3
     };
   },
   props: {
@@ -66,13 +72,11 @@ export default {
   },
   mounted() {
     this.generateParagraph()
-    console.log(this.paragraph)
-
   },
   methods: {
     startCountDown(second) {
       const interval = setInterval(() => {
-        this.timeCountDown = (second-=0.01).toFixed(1)
+        this.timeCountDown = (second -= 0.01).toFixed(1)
         if (second < 0) {
           clearInterval(interval)
           this.finalData = {
@@ -80,7 +84,7 @@ export default {
             accuration: 100 - ((this.mistakes / (this.countShringkingText > 1 ? this.finalData.character : this.inputtedIndex)) * 100).toFixed(2),
             character: this.finalData.character += this.inputtedIndex,
             words: this.countWords,
-            wpm: this.finalData.character / 5,
+            wpm: (this.finalData.character / 5) / 0.5,
           }
         }
       }, 10);
@@ -133,8 +137,10 @@ export default {
       this.inputtedText = [],
         this.countWords = 0,
         this.countShringkingText = 1
-      this.timeCountDown = 60
+      this.timeCountDown = 30
       this.isTyping = false
+      this.isStartButtonClicked=false
+      this.startTypingCountDown=3
     },
 
     getLetterColor(index) {
@@ -152,9 +158,17 @@ export default {
     },
 
     focusToTyping() {
-      this.isTyping = true;
-      this.$refs.isTypingWrap.focus();
-      this.startCountDown(this.timeCountDown)
+      this.isStartButtonClicked = true
+      let interval = setInterval(() => {
+        this.startTypingCountDown--
+        if (this.startTypingCountDown < 0) {
+          clearInterval(interval)
+          this.isTyping = true;
+          this.$refs.isTypingWrap.focus();
+          this.startCountDown(this.timeCountDown)
+        }
+      }, 1000)
+
 
     },
   },
@@ -163,13 +177,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.container{
-  margin:0px 50px;
+.container {
+  margin: 0px 50px;
 }
-.timer-wrap{
+
+.timer-wrap {
   text-align: start;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
+
 .initial {
   color: white;
   border-left: transparent 2px solid;

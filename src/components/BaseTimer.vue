@@ -1,12 +1,10 @@
 <template>
-  <div class="progressbar" :style="{ width:second/30*100+'%', fontSize: fontSize + 'px' }">
+  <div class="progressbar" :style="{ width:second/30*100+'%', }">
   </div>
 </template>
 <script>
 export default{
-  props:{
-    second:Number
-  }
+  props:['second']
 }
 </script>
 <style>
